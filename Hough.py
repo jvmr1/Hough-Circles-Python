@@ -91,6 +91,8 @@ img = cv2.imread('iris.png')
 hough = HoughTransform(img, 100, 101, 60, 120, 240, 300)
 #hough = HoughTransform(img, 10, 11)
 
+hough.accumulator[:,:,0] = hough.accumulator[:,:,0]/255.0
+
 cv2.imshow("imagem", img)
 cv2.imshow("Acumulador", hough.accumulator)
 cv2.waitKey(0)
