@@ -16,7 +16,7 @@ class HoughTransform:
         self.height = img.shape[1]
         self.accumulator=np.zeros((self.width, self.height, (self.rmax-self.rmin)))
         self.pxs_on = self.BufferedImageToPoint(self.img, 0)
-        self.applyMethod(1)
+        self.applyMethod(3)
 
     def BufferedImageToPoint(self, img, valor):
         pontos = []
@@ -105,33 +105,23 @@ class HoughTransform:
                             self.coord_center[index][2]=self.rmin+delta_raio
                             self.coord_center[index][3]=self.accumulator[lin][col][delta_raio]
                             trocou = True
-        print(self.coord_center)
         return self.coord_center
 
 
-
-
-        #Index_Min?
-
-    #localizaLimbo?
-    #ordenaHough?
-
-img = cv2.imread('iris.png')
+img = cv2.imread('bordas.jpg')
 output=img.copy()
-hough = HoughTransform(img, 95, 105, 60, 120, 240, 300)
+hough = HoughTransform(img, 64, 67, 60, 120, 240, 300)
 
-(y, x, r, acc)=hough.coord_center[0]
-x=int(x)
-y=int(y)
-r=int(r)
-cv2.rectangle(output, (x - 1, y - 1), (x + 1, y + 1), (0, 128, 255), -1)
-cv2.circle(output, (x, y), r, (0, 255, 0), 1)
+for (y, x, r, acc) in hough.coord_center:
+    x=int(x)
+    y=int(y)
+    r=int(r)
+    cv2.rectangle(output, (x - 1, y - 1), (x + 1, y + 1), (0, 128, 255), -1)
+    cv2.circle(output, (x, y), r, (0, 255, 0), 1)
 
 cv2.imshow("imagem", img)
 cv2.imshow("output", output)
-cv2.waitKey(0)
 
-'''
-for i in range(hough.rmax-hough.rmin):
-    cv2.imshow("Acumulador", hough.accumulator[:,:,i])
-'''
+#for i in range(hough.rmax-hough.rmin):
+#    cv2.imshow("Acumulador", hough.accumulator[:,:,i])
+cv2.waitKey(0)
