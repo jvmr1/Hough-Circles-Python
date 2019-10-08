@@ -78,7 +78,8 @@ class HoughTransform:
                     #print(h_x, h_y, delta_raio)
                     if ((h_x >= 0 and h_x < self.width) and (h_y >= 0 and h_y < self.height)):
                         self.accumulator[h_x][h_y][delta_raio] += 1
-
+        self.accumulator=self.accumulator/255
+        #getPeak(qtd)
 
     #def getPeak
         #Index_Min?
@@ -86,13 +87,11 @@ class HoughTransform:
     #localizaLimbo?
     #ordenaHough?
 
-
-img = cv2.imread('iris.png')
-hough = HoughTransform(img, 100, 101, 60, 120, 240, 300)
+img = cv2.imread('circulo.png')
+hough = HoughTransform(img, 95, 105, 60, 120, 240, 300)
 #hough = HoughTransform(img, 10, 11)
 
-hough.accumulator[:,:,0] = hough.accumulator[:,:,0]/255.0
-
 cv2.imshow("imagem", img)
-cv2.imshow("Acumulador", hough.accumulator)
-cv2.waitKey(0)
+for i in range(hough.rmax-hough.rmin):
+    cv2.imshow("Acumulador", hough.accumulator[:,:,i])
+    cv2.waitKey(0)
