@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import math
 
 class HoughTransform:
 
@@ -14,7 +15,8 @@ class HoughTransform:
         self.width = img.shape[0]
         self.height = img.shape[1]
         self.accumulator=np.zeros((self.width,self.height,(self.rmax-self.rmin)))
-        self.pxs_on = self.BufferedImageToPoint(self.img, 0)
+        #self.pxs_on = self.BufferedImageToPoint(self.img, 0)
+        self.getCirculo(rmin)
 
     def BufferedImageToPoint(self, img, valor):
         pontos = []
@@ -25,7 +27,40 @@ class HoughTransform:
 
         return pontos
 
-    #def getCirculo
+    def getCirculo(self, raio):
+        xc=0
+        yc=0
+        xant=0
+        yant=0
+        self.circulo = []
+
+        if (self.limSupD==None or self.limSupE==None or self.limInfE==None or self.limInfD==None):
+            for passo in range (0,360):
+                angulo=passo
+                angulo=math.radians(angulo)
+
+                xc=raio*math.cos(angulo)
+                yc=raio*math.sin(angulo)
+
+                if (passo ==0 or xc!=xant or yc!=yant):
+                    xant=xc
+                    yant=yc
+                    self.circulo.append([xc, yc])
+        else:
+            for passo in range (0,360):
+                if ((passo > 0 and passo < self.limSupD) or (passo > self.limInfD and passo < 360) or (passo > self.limSupE and passo < self.limInfE)):
+                    angulo=passo
+                    angulo=math.radians(angulo)
+
+                    xc=raio*math.cos(angulo)
+                    yc=raio*math.sin(angulo)
+
+                    if (passo ==0 or xc!=xant or yc!=yant):
+                        xant=xc
+                        yant=yc
+                        self.circulo.append([xc, yc])
+
+
 
     #def applyMethod
 
@@ -36,5 +71,8 @@ class HoughTransform:
     #ordenaHough?
 
 
-img = cv2.imread('edges_screenshot_07.10.2019.png')
-hough = HoughTransform(img, 100, 150)
+img = cv2.imread('bordas.jpg')
+hough = HoughTransform(img, 100, 150, 60, 120, 240, 300)
+
+for i in hough.circulo:
+    print(i)
