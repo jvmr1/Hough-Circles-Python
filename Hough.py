@@ -14,7 +14,7 @@ class HoughTransform:
         self.limInfD = limInfD
         self.width = img.shape[0]
         self.height = img.shape[1]
-        self.accumulator=np.zeros((self.width,self.height,(self.rmax-self.rmin)))
+        self.accumulator=np.zeros((self.width, self.height, (self.rmax-self.rmin)))
         self.pxs_on = self.BufferedImageToPoint(self.img, 0)
         self.applyMethod(1)
 
@@ -79,19 +79,59 @@ class HoughTransform:
                     if ((h_x >= 0 and h_x < self.width) and (h_y >= 0 and h_y < self.height)):
                         self.accumulator[h_x][h_y][delta_raio] += 1
         self.accumulator=self.accumulator/255
-        #getPeak(qtd)
+        self.getPeak(qtd)
 
-    #def getPeak
+    def getPeak(self, qtd):
+        self.coord_center=np.zeros([qtd, 4])
+        index=0
+        cont=0
+        trocou=True
+        for delta_raio in range (0, (self.rmax-self.rmin)):
+            for lin in range (0, len(self.accumulator)):
+                for col in range (0, len(self.accumulator[0])):
+                    if (cont<len(self.coord_center)):
+                        self.coord_center[cont][0]=lin
+                        self.coord_center[cont][1]=col
+                        self.coord_center[cont][2]=self.rmin+delta_raio
+                        self.coord_center[cont][3]=self.accumulator[lin][col][delta_raio]
+                        cont+=1
+                    else:
+                        if(trocou):
+                            index = np.argmin(self.coord_center[:,3])
+                            trocou = False
+                        if (self.accumulator[lin][col][delta_raio] > self.coord_center[index][3]):
+                            self.coord_center[index][0]=lin
+                            self.coord_center[index][1]=col
+                            self.coord_center[index][2]=self.rmin+delta_raio
+                            self.coord_center[index][3]=self.accumulator[lin][col][delta_raio]
+                            trocou = True
+        print(self.coord_center)
+        return self.coord_center
+
+
+
+
         #Index_Min?
 
     #localizaLimbo?
     #ordenaHough?
 
-img = cv2.imread('circulo.png')
+img = cv2.imread('iris.png')
+output=img.copy()
 hough = HoughTransform(img, 95, 105, 60, 120, 240, 300)
-#hough = HoughTransform(img, 10, 11)
+
+(y, x, r, acc)=hough.coord_center[0]
+x=int(x)
+y=int(y)
+r=int(r)
+cv2.rectangle(output, (x - 1, y - 1), (x + 1, y + 1), (0, 128, 255), -1)
+cv2.circle(output, (x, y), r, (0, 255, 0), 1)
 
 cv2.imshow("imagem", img)
+cv2.imshow("output", output)
+cv2.waitKey(0)
+
+'''
 for i in range(hough.rmax-hough.rmin):
     cv2.imshow("Acumulador", hough.accumulator[:,:,i])
-    cv2.waitKey(0)
+'''
