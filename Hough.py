@@ -2,10 +2,12 @@ import numpy as np
 import math
 
 class HoughTransform:
-    def __init__(self, img, rmin, rmax, limSupD=None, limSupE=None, limInfE=None, limInfD=None):
+    def __init__(self, img, rmin, rmax, minDist, qtd, limSupD=None, limSupE=None, limInfE=None, limInfD=None):
         self.img = img
         self.rmin = rmin
         self.rmax = rmax
+        self.minDist = minDist
+        self.qtd = qtd
         self.limSupD = limSupD
         self.limSupE = limSupE
         self.limInfE = limInfE
@@ -13,8 +15,8 @@ class HoughTransform:
         self.width = img.shape[0]
         self.height = img.shape[1]
         self.accumulator=np.zeros((self.width, self.height, (self.rmax-self.rmin)))
-        self.pxs_on = self.BufferedImageToPoint(self.img, 0)
-        self.applyMethod(1) #passar qtd como parametro
+        self.pxs_on = self.BufferedImageToPoint(self.img, 0) #verificar se faz sentido usar 0, ou se e melhor outro numero
+        self.applyMethod(self.qtd)
 
     def BufferedImageToPoint(self, img, valor):
         pontos = []
@@ -87,6 +89,13 @@ class HoughTransform:
                             index = np.argmin(self.coord_center[:,3])
                             trocou = False
                         if (self.accumulator[lin][col][delta_raio] > self.coord_center[index][3]):
+                            '''
+                            dist=0
+                            for i in range (0, qtd):
+                                if ((self.coord_center[i][0]-self.minDist < lin < self.coord_center[i][0]+self.minDist) and (self.coord_center[i][1]-self.minDist < col < self.coord_center[i][1]+self.minDist)):
+                                    dist+=1
+                            if (dist==0):
+                            '''
                             self.coord_center[index][0]=lin
                             self.coord_center[index][1]=col
                             self.coord_center[index][2]=self.rmin+delta_raio
