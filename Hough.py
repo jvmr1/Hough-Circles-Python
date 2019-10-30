@@ -22,7 +22,7 @@ class HoughTransform:
         pontos = []
         for  lin in range(0, img.shape[0]):
             for col in range(0, img.shape[1]):
-                if(img[lin][col][0] > valor):
+                if(img[lin][col][0] > valor): #nao usar [0] em imagens so nivel de cinza com 1 camada
                     pontos.append([lin, col])
         return pontos
 
@@ -88,17 +88,18 @@ class HoughTransform:
                         if(trocou):
                             index = np.argmin(self.coord_center[:,3])
                             trocou = False
-                        if (self.accumulator[lin][col][delta_raio] > self.coord_center[index][3]):
-                            '''
-                            dist=0
-                            for i in range (0, qtd):
-                                if ((self.coord_center[i][0]-self.minDist < lin < self.coord_center[i][0]+self.minDist) and (self.coord_center[i][1]-self.minDist < col < self.coord_center[i][1]+self.minDist)):
-                                    dist+=1
-                            if (dist==0):
-                            '''
+                        if (self.accumulator[lin][col][delta_raio] > self.coord_center[index][3]): # and self.distanciaCirculos(lin, col)):
                             self.coord_center[index][0]=lin
                             self.coord_center[index][1]=col
                             self.coord_center[index][2]=self.rmin+delta_raio
                             self.coord_center[index][3]=self.accumulator[lin][col][delta_raio]
                             trocou = True
         return self.coord_center
+
+    '''
+    def distanciaCirculos(self, lin, col):
+        for i in range(0, self.qtd):
+            if ((self.coord_center[i][0]-self.minDist < lin < self.coord_center[i][0]+self.minDist) and (self.coord_center[i][1]-self.minDist < col < self.coord_center[i][1]+self.minDist)):
+                return False
+        return True
+    '''
