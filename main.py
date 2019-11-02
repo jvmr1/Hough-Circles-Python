@@ -3,7 +3,7 @@ from Hough import HoughTransform
 
 img = cv2.imread('circulos.png')
 output=img.copy()
-hough = HoughTransform(img, 48, 102, 0, 10)
+hough = HoughTransform(img, 78, 102, 20, 3)
 
 for (y, x, r, acc) in hough.coord_center:
     x=int(x)

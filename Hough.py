@@ -70,6 +70,7 @@ class HoughTransform:
         self.accumulator=self.accumulator/255
         self.getPeak(qtd)
 
+    '''
     def getPeak(self, qtd):
         self.coord_center=np.zeros([qtd, 4])
         index=0
@@ -95,11 +96,40 @@ class HoughTransform:
                             self.coord_center[index][3]=self.accumulator[lin][col][delta_raio]
                             trocou = True
         return self.coord_center
-
     '''
-    def distanciaCirculos(self, lin, col):
+
+    def getPeak(self, qtd):
+        dtype = [('lin', int), ('col', int), ('raio', int), ('acc', float)]
+        values=[]
+
+        for delta_raio in range (0, (self.rmax-self.rmin)):
+            for lin in range (0, len(self.accumulator)):
+                for col in range (0, len(self.accumulator[0])):
+                    values.append((lin, col, self.rmin+delta_raio, self.accumulator[lin][col][delta_raio]))
+
+        self.peaks = np.array(values, dtype=dtype)
+        self.peaks = np.sort(self.peaks, order='acc')
+        self.peaks=self.peaks[::-1]
+        #self.peaks=self.peaks[:qtd]
+        #return self.coord_center
+        self.distanciaCirculos()
+
+    def distanciaCirculos(self):
+        '''
         for i in range(0, self.qtd):
             if ((self.coord_center[i][0]-self.minDist < lin < self.coord_center[i][0]+self.minDist) and (self.coord_center[i][1]-self.minDist < col < self.coord_center[i][1]+self.minDist)):
                 return False
         return True
-    '''
+        '''
+
+        self.coord_center=[]
+        self.coord_center.append(self.peaks[0])
+        while (len(self.coord_center)<self.qtd):
+            for i in range(1, len(self.peaks)):
+                for j in range(0, len(self.coord_center)):
+                    print(self.coord_center)
+                    if (not(self.coord_center[j][0]-self.minDist < self.peaks[i][0] < self.coord_center[j][0]+self.minDist) or not(self.coord_center[j][1]-self.minDist < self.peaks[i][1] < self.coord_center[j][1]+self.minDist)):
+                        self.coord_center.append(self.peaks[i])
+                print('')
+
+        #return self.coord_center
